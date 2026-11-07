@@ -14,7 +14,7 @@ export const Hero: React.FC<HeroProps> = ({ currency }) => {
   return (
     <section
       id="hero"
-      className={`relative min-h-[100dvh] h-auto lg:h-[100dvh] w-full flex flex-col justify-between overflow-hidden select-none transition-colors duration-300 ${
+      className={`relative min-h-[100dvh] h-auto lg:h-[100dvh] lg:min-h-[860px] w-full flex flex-col justify-between overflow-hidden select-none transition-colors duration-300 ${
         theme === 'light' ? 'bg-gradient-to-b from-[#DCE3EB] via-[#E8EDF3] to-[#F8FAFC]' : 'bg-[#17191C]'
       }`}
     >
@@ -72,30 +72,6 @@ export const Hero: React.FC<HeroProps> = ({ currency }) => {
           aria-hidden="true"
         />
       )}
-
-      {/* HAND 1: Emerges from BOTTOM-LEFT corner of screen towards globe (Desktop & Tablet) */}
-      <div
-        className="hidden md:block absolute -left-8 lg:-left-6 xl:-left-[100px] -bottom-34 lg:-bottom-40 xl:-bottom-[175px] md:w-[720px] lg:w-[820px] xl:w-[920px] pointer-events-none select-none z-20 animate-hand-bottom-left"
-        style={{
-          maskImage: 'linear-gradient(42deg, transparent 0%, rgba(0,0,0,0.2) 3%, rgba(0,0,0,0.8) 8%, #000 15%, #000 100%)',
-          WebkitMaskImage: 'linear-gradient(42deg, transparent 0%, rgba(0,0,0,0.2) 3%, rgba(0,0,0,0.8) 8%, #000 15%, #000 100%)',
-        }}
-      >
-        <img
-          alt="Left Reaching Hand"
-          className={`w-full h-auto object-contain pointer-events-none select-none ${
-            theme === 'light'
-              ? 'drop-shadow-[0_16px_40px_rgba(15,23,42,0.18)]'
-              : 'drop-shadow-[0_10px_40px_rgba(146,157,167,0.35)]'
-          }`}
-          style={{
-            transform: 'rotate(5deg) scale(0.88)',
-            transformOrigin: 'bottom left',
-            filter: theme === 'light' ? 'grayscale(1) brightness(1.02) contrast(1.08)' : 'grayscale(0.8) brightness(1.05) contrast(1.1)',
-          }}
-          src="/hand-left.png"
-        />
-      </div>
 
       {/* Main Content Container - Centered and tight on Mobile, spacious on Desktop */}
       <div className="relative w-full z-20 flex flex-col justify-center lg:justify-between pt-24 sm:pt-28 lg:pt-28 xl:pt-32 pb-10 sm:pb-12 lg:pb-4 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto h-full min-h-[calc(100dvh-64px)] lg:min-h-0">
@@ -165,6 +141,30 @@ export const Hero: React.FC<HeroProps> = ({ currency }) => {
 
           {/* Central Anchor Stage for Globe + Hands together */}
           <div className="relative w-[260px] h-[260px] sm:w-[330px] sm:h-[330px] md:w-[410px] md:h-[410px] lg:w-[460px] lg:h-[460px] xl:w-[500px] xl:h-[500px] flex items-center justify-center">
+
+            {/* HAND 1: Reaches in from LOWER-LEFT side towards globe (Locked to Central Anchor Stage) */}
+            <div
+              className="hidden md:block absolute right-[65%] lg:right-[72%] xl:right-[75%] -bottom-20 lg:-bottom-28 xl:-bottom-36 md:w-[640px] lg:w-[720px] xl:w-[800px] pointer-events-none select-none z-20 animate-hand-bottom-left"
+              style={{
+                maskImage: 'linear-gradient(42deg, transparent 0%, rgba(0,0,0,0.2) 3%, rgba(0,0,0,0.8) 8%, #000 15%, #000 100%)',
+                WebkitMaskImage: 'linear-gradient(42deg, transparent 0%, rgba(0,0,0,0.2) 3%, rgba(0,0,0,0.8) 8%, #000 15%, #000 100%)',
+              }}
+            >
+              <img
+                alt="Left Reaching Hand"
+                className={`w-full h-auto object-contain pointer-events-none select-none ${
+                  theme === 'light'
+                    ? 'drop-shadow-[0_16px_40px_rgba(15,23,42,0.18)]'
+                    : 'drop-shadow-[0_10px_40px_rgba(146,157,167,0.35)]'
+                }`}
+                style={{
+                  transform: 'rotate(5deg) scale(0.88)',
+                  transformOrigin: 'bottom left',
+                  filter: theme === 'light' ? 'grayscale(1) brightness(1.02) contrast(1.08)' : 'grayscale(0.8) brightness(1.05) contrast(1.1)',
+                }}
+                src="/hand-left.png"
+              />
+            </div>
 
             {/* HAND 2: Reaches in from UPPER-RIGHT side towards upper-right region of globe (Desktop & Tablet) */}
             <div
