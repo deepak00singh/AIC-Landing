@@ -63,19 +63,19 @@ export const Hero: React.FC<HeroProps> = ({ currency }) => {
       {/* Radiant Spotlight Directly Behind the 3D Globe Stage in Light Mode */}
       {theme === 'light' ? (
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full bg-gradient-to-tr from-[#FF4B32]/12 via-[#CBD5E1]/30 to-transparent blur-[90px] pointer-events-none -z-10"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] sm:w-[420px] sm:h-[420px] lg:w-[520px] lg:h-[520px] rounded-full bg-gradient-to-tr from-[#FF4B32]/12 via-[#CBD5E1]/30 to-transparent blur-[60px] sm:blur-[90px] pointer-events-none -z-10"
           aria-hidden="true"
         />
       ) : (
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#929DA7]/[0.05] blur-[140px] pointer-events-none -z-10"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[480px] sm:h-[480px] lg:w-[600px] lg:h-[600px] rounded-full bg-[#929DA7]/[0.05] blur-[80px] sm:blur-[140px] pointer-events-none -z-10"
           aria-hidden="true"
         />
       )}
 
-      {/* HAND 1: Emerges directly from BOTTOM-LEFT corner of screen towards globe */}
+      {/* HAND 1: Emerges from BOTTOM-LEFT corner of screen towards globe (Desktop & Tablet) */}
       <div
-        className="absolute -left-5 sm:-left-5 md:-left-8 lg:-left-6 xl:-left-[100px] -bottom-25 sm:-bottom-28 md:-bottom-34 lg:-bottom-40 xl:-bottom-[175px] w-[520px] sm:w-[620px] md:w-[720px] lg:w-[820px] xl:w-[920px] pointer-events-none select-none z-20 animate-hand-bottom-left"
+        className="hidden md:block absolute -left-8 lg:-left-6 xl:-left-[100px] -bottom-34 lg:-bottom-40 xl:-bottom-[175px] md:w-[720px] lg:w-[820px] xl:w-[920px] pointer-events-none select-none z-20 animate-hand-bottom-left"
         style={{
           maskImage: 'linear-gradient(42deg, transparent 0%, rgba(0,0,0,0.2) 3%, rgba(0,0,0,0.8) 8%, #000 15%, #000 100%)',
           WebkitMaskImage: 'linear-gradient(42deg, transparent 0%, rgba(0,0,0,0.2) 3%, rgba(0,0,0,0.8) 8%, #000 15%, #000 100%)',
@@ -97,51 +97,49 @@ export const Hero: React.FC<HeroProps> = ({ currency }) => {
         />
       </div>
 
-      {/* Main Content Container - Fits Full Screen Viewport Without Scrolling Cuts */}
-      <div className="relative w-full z-20 flex-1 flex flex-col justify-between pt-16 sm:pt-18 lg:pt-18 pb-1 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto h-full min-h-0">
+      {/* Main Content Container - Centered and tight on Mobile, spacious on Desktop */}
+      <div className="relative w-full z-20 flex flex-col justify-center lg:justify-between pt-24 sm:pt-24 lg:pt-18 pb-10 sm:pb-12 lg:pb-2 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto h-full min-h-[calc(100dvh-64px)] lg:min-h-0">
 
         {/* Top Centered Header & Copy */}
-        <div className="relative z-30 text-center max-w-3xl mx-auto space-y-3 sm:space-y-4 pt-3 sm:pt-6">
+        <div className="relative z-30 text-center max-w-3xl mx-auto space-y-3 sm:space-y-3.5">
 
           {/* Headline */}
-          <h1 className="text-3xl sm:text-4xl md:text-[44px] lg:text-[48px] xl:text-[52px] font-black tracking-[-0.03em] leading-[1.08] max-w-4xl mx-auto">
+          <h1 className="text-2xl sm:text-3xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-black tracking-[-0.03em] leading-[1.15] sm:leading-[1.08] max-w-4xl mx-auto px-2">
             <span
               className={`block transition-colors duration-300 ${
                 theme === 'light'
-                  ? 'text-[#0F172A]'
+                  ? 'text-[#0F172A] drop-shadow-[0_1px_2px_rgba(0,0,0,0.06)]'
                   : 'text-white drop-shadow-[0_2px_12px_rgba(255,255,255,0.08)]'
               }`}
             >
-              Build, Deploy &amp; Scale
+              Build, Deploy & Scale
             </span>
-            <span className="block mt-0.5 sm:mt-1 bg-clip-text text-transparent bg-gradient-to-r from-[#FF4B32] via-[#FF5E48] to-[#FF7A66] drop-shadow-[0_4px_24px_rgba(255,75,50,0.22)]">
+            <span className="block bg-gradient-to-r from-[#FF4B32] via-[#FF5F49] to-[#FF7A66] bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(255,75,50,0.35)]">
               Cloud Infrastructure
             </span>
           </h1>
 
           {/* Subtitle */}
           <p
-            className={`text-xs sm:text-sm md:text-[14.5px] leading-relaxed max-w-xl mx-auto pt-0.5 sm:pt-1 transition-colors duration-300 font-normal ${
+            className={`text-xs sm:text-sm md:text-[14.5px] leading-relaxed max-w-xl mx-auto pt-0.5 sm:pt-1 transition-colors duration-300 font-normal px-2 ${
               theme === 'light' ? 'text-[#475569]' : 'text-[#94A3B8]'
             }`}
           >
             Deploy VPS, dedicated servers, GPU instances and app hosting — all from a single dashboard.{' '}
-            <span className="inline-block font-medium">
-              Starting at just{' '}
-              <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full font-bold text-xs sm:text-sm transition-all duration-300 align-baseline ${
-                  theme === 'light'
-                    ? 'bg-[#FF4B32]/10 text-[#FF4B32] border border-[#FF4B32]/25 shadow-xs'
-                    : 'bg-[#FF4B32]/15 text-[#FF5E48] border border-[#FF4B32]/35 shadow-[0_0_12px_rgba(255,75,50,0.2)]'
-                }`}
-              >
-                {currentPrice}
-              </span>.
+            <span
+              className={`inline-block font-semibold px-2 py-0.5 rounded-full text-xs transition-colors duration-300 ${
+                theme === 'light'
+                  ? 'bg-[#FF4B32]/12 text-[#FF4B32] border border-[#FF4B32]/25'
+                  : 'bg-[#FF4B32]/15 text-[#FF7A66] border border-[#FF4B32]/30'
+              }`}
+            >
+              Starting at just {currentPrice}
             </span>
+            .
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 pt-1.5 sm:pt-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 pt-2 sm:pt-3 w-full max-w-xs sm:max-w-none mx-auto">
             <a
               href="#platform-services"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-2.5 rounded-full font-bold text-sm text-white bg-gradient-to-r from-[#FF4B32] via-[#FF553D] to-[#E63E26] hover:from-[#E63E26] hover:to-[#D1341E] shadow-[0_4px_20px_rgba(255,75,50,0.38)] hover:shadow-[0_8px_28px_rgba(255,75,50,0.5)] border border-[#FF6B55]/30 transition-all hover:scale-[1.02] active:scale-[0.98] group cursor-pointer"
@@ -162,15 +160,15 @@ export const Hero: React.FC<HeroProps> = ({ currency }) => {
           </div>
         </div>
 
-        {/* Centerpiece Stage: Interactive 3D Globe Cleanly Cradled Between Both Hands */}
-        <div className="relative flex-1 w-full my-auto min-h-[300px] sm:min-h-[360px] md:min-h-[400px] lg:min-h-[460px] flex items-center justify-center overflow-visible">
+        {/* Centerpiece Stage: Interactive 3D Globe */}
+        <div className="relative w-full mt-6 sm:mt-8 lg:mt-0 lg:flex-1 lg:my-auto min-h-[260px] sm:min-h-[340px] md:min-h-[400px] lg:min-h-[460px] flex items-center justify-center overflow-visible">
 
           {/* Central Anchor Stage for Globe + Hands together */}
-          <div className="relative w-[280px] h-[280px] sm:w-[350px] sm:h-[350px] md:w-[410px] md:h-[410px] lg:w-[460px] lg:h-[460px] xl:w-[500px] xl:h-[500px] flex items-center justify-center">
+          <div className="relative w-[260px] h-[260px] sm:w-[330px] sm:h-[330px] md:w-[410px] md:h-[410px] lg:w-[460px] lg:h-[460px] xl:w-[500px] xl:h-[500px] flex items-center justify-center">
 
-            {/* HAND 2: Reaches in from UPPER-RIGHT side towards upper-right region of globe */}
+            {/* HAND 2: Reaches in from UPPER-RIGHT side towards upper-right region of globe (Desktop & Tablet) */}
             <div
-              className="absolute left-[82%] sm:left-[76%] md:left-[80%] lg:left-[92%] xl:left-[90%] -top-28 sm:-top-32 md:-top-40 lg:-top-48 xl:-top-[225px] w-[440px] sm:w-[520px] md:w-[620px] lg:w-[700px] xl:w-[760px] pointer-events-none select-none z-10 animate-hand-top-right"
+              className="hidden md:block absolute left-[80%] lg:left-[92%] xl:left-[90%] -top-40 lg:-top-48 xl:-top-[225px] md:w-[620px] lg:w-[700px] xl:w-[760px] pointer-events-none select-none z-10 animate-hand-top-right"
               style={{
                 maskImage: 'linear-gradient(to right, #000 0%, #000 65%, rgba(0,0,0,0.8) 78%, rgba(0,0,0,0.3) 90%, transparent 99%)',
                 WebkitMaskImage: 'linear-gradient(to right, #000 0%, #000 65%, rgba(0,0,0,0.8) 78%, rgba(0,0,0,0.3) 90%, transparent 99%)',

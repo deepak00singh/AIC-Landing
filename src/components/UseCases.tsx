@@ -168,7 +168,7 @@ export const UseCases: React.FC = () => {
     <section
       ref={targetRef}
       id="use-cases"
-      className={`relative h-[500vh] transition-colors duration-300 ${
+      className={`relative h-[320vh] md:h-[500vh] transition-colors duration-300 ${
         theme === 'light' ? 'bg-[#F8FAFC] border-y border-[#E2E8F0]' : 'bg-[#131517] border-y border-[#929DA7]/15'
       }`}
     >
