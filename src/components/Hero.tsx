@@ -98,10 +98,10 @@ export const Hero: React.FC<HeroProps> = ({ currency }) => {
       </div>
 
       {/* Main Content Container - Centered and tight on Mobile, spacious on Desktop */}
-      <div className="relative w-full z-20 flex flex-col justify-center lg:justify-between pt-24 sm:pt-24 lg:pt-18 pb-10 sm:pb-12 lg:pb-2 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto h-full min-h-[calc(100dvh-64px)] lg:min-h-0">
+      <div className="relative w-full z-20 flex flex-col justify-center lg:justify-between pt-24 sm:pt-28 lg:pt-28 xl:pt-32 pb-10 sm:pb-12 lg:pb-4 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto h-full min-h-[calc(100dvh-64px)] lg:min-h-0">
 
         {/* Top Centered Header & Copy */}
-        <div className="relative z-30 text-center max-w-3xl mx-auto space-y-3 sm:space-y-3.5">
+        <div className="relative z-30 text-center max-w-3xl mx-auto space-y-3 sm:space-y-3.5 pt-2 sm:pt-3 lg:pt-3">
 
           {/* Headline */}
           <h1 className="text-2xl sm:text-3xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-black tracking-[-0.03em] leading-[1.15] sm:leading-[1.08] max-w-4xl mx-auto px-2">
