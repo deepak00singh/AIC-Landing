@@ -162,6 +162,14 @@ export interface MarkerConfig {
     color: string;
     size: number;
 }
+export interface ArcConfig {
+    show?: boolean;
+    color?: string;
+    width?: number;
+    altitude?: number;
+    opacity?: number;
+    connectAllMarkers?: boolean;
+}
 export interface DotsConfig {
     color: string;
     size: number;
@@ -177,6 +185,7 @@ export interface GlobeProps {
     scale?: number;
     stopOnHover?: boolean;
     markerConfig?: MarkerConfig;
+    arcConfig?: ArcConfig;
     direction?: "left" | "right";
     initialLatitude?: number;
     initialLongitude?: number;
@@ -228,6 +237,7 @@ export function Globe({
     scale = 8,
     stopOnHover = true,
     markerConfig = { markers: [], color: "#00f7ff", size: 40 },
+    arcConfig = { show: true, color: "#FF4B32", width: 1.2, altitude: 0.16, opacity: 0.85, connectAllMarkers: true },
     direction = "left",
     initialLatitude = 23,
     initialLongitude = -23,
@@ -251,6 +261,7 @@ export function Globe({
     const outlineMaterialsRef = useRef<MeshBasicMaterial[]>([]);
     const dotMaterialRef = useRef<MeshBasicMaterial | null>(null);
     const markerMaterialsRef = useRef<MeshBasicMaterial[]>([]);
+    const arcMaterialsRef = useRef<MeshBasicMaterial[]>([]);
     const rendererRef = useRef<WebGLRenderer | null>(null);
     const sceneRef = useRef<Scene | null>(null);
     const cameraRef = useRef<PerspectiveCamera | null>(null);
@@ -319,11 +330,18 @@ export function Globe({
             mat.needsUpdate = true;
         });
 
+        // 6. Update Arc Materials
+        const resolvedArcCol = arcConfig?.color || markerConfig.color || "#FF4B32";
+        arcMaterialsRef.current.forEach((mat) => {
+            mat.color.set(resolvedArcCol);
+            mat.needsUpdate = true;
+        });
+
         // Immediate single-frame render
         if (rendererRef.current && sceneRef.current && cameraRef.current) {
             rendererRef.current.render(sceneRef.current, cameraRef.current);
         }
-    }, [oceanColor, dotColor, outlineColor, graticuleColor, markerConfig.color]);
+    }, [oceanColor, dotColor, outlineColor, graticuleColor, markerConfig.color, arcConfig?.color]);
 
     // Main initialization effect: Only runs when structural properties change, NOT on theme color toggle!
     useEffect(() => {
@@ -497,9 +515,25 @@ export function Globe({
         const continentOutlineGroup = new Group();
         outlineMaterialsRef.current = [];
         markerMaterialsRef.current = [];
+        arcMaterialsRef.current = [];
 
         let dotInstances: InstancedMesh | Mesh | null = null;
         let markerMeshes: Mesh[] = [];
+        let arcMeshes: Mesh[] = [];
+        let arcAnimItems: Array<{
+            coreMesh: Mesh;
+            glowMesh: Mesh;
+            totalIndices: number;
+            glowIndices: number;
+            staggerStart: number;
+            staggerDuration: number;
+        }> = [];
+        let arcCycleTime = 0;
+        let lastTime = performance.now();
+        let baseArcOpacity = 0.88;
+        let baseGlowOpacity = 0.25;
+        let arcCoreMaterial: MeshBasicMaterial | null = null;
+        let arcGlowMaterial: MeshBasicMaterial | null = null;
 
         const loadWorldData = async () => {
             try {
@@ -830,12 +864,30 @@ export function Globe({
             markerMeshes = [];
             markerMaterialsRef.current = [];
 
+            arcMeshes.forEach((mesh) => {
+                globeGroup.remove(mesh);
+                mesh.geometry.dispose();
+                if (Array.isArray(mesh.material)) {
+                    mesh.material.forEach((m) => m.dispose());
+                } else {
+                    mesh.material.dispose();
+                }
+            });
+            arcMeshes = [];
+            arcMaterialsRef.current = [];
+            arcAnimItems = [];
+            arcCycleTime = 0;
+            lastTime = performance.now();
+
             if (markerConfig.markers && markerConfig.markers.length > 0) {
                 const markerSize = 0.01 * markerRadiusMultiplier;
                 const markerGeometry = new SphereGeometry(markerSize, 16, 16);
+                const markerGlowGeometry = new SphereGeometry(markerSize * 1.6, 16, 16);
                 const markerColorObj = resolvedMarkerColor
                     ? new Color(resolvedMarkerColor)
                     : new Color(1, 1, 1);
+
+                const validMarkerVectors: Vector3[] = [];
 
                 markerConfig.markers.forEach((marker) => {
                     if (
@@ -850,6 +902,7 @@ export function Globe({
                     });
                     markerMaterialsRef.current.push(markerMat);
 
+                    // 1. Core marker dot
                     const markerMesh = new Mesh(markerGeometry, markerMat);
                     markerMesh.position.set(
                         pos.x * globeRadius,
@@ -858,7 +911,106 @@ export function Globe({
                     );
                     globeGroup.add(markerMesh);
                     markerMeshes.push(markerMesh);
+
+                    // 2. Subtle luminous halo around each point
+                    const glowMat = new MeshBasicMaterial({
+                        color: markerColorObj,
+                        transparent: true,
+                        opacity: 0.35,
+                    });
+                    markerMaterialsRef.current.push(glowMat);
+                    const glowMesh = new Mesh(markerGlowGeometry, glowMat);
+                    glowMesh.position.copy(markerMesh.position);
+                    globeGroup.add(glowMesh);
+                    markerMeshes.push(glowMesh);
+
+                    validMarkerVectors.push(markerMesh.position.clone());
                 });
+
+                // Connect every point to each other with round 3D curved arcs
+                if (validMarkerVectors.length > 1 && (arcConfig?.show ?? true)) {
+                    const resolvedArcColor = arcConfig?.color || resolvedMarkerColor || "#FF4B32";
+                    const arcColorObj = new Color(resolvedArcColor);
+                    baseArcOpacity = arcConfig?.opacity ?? 0.88;
+                    baseGlowOpacity = (arcConfig?.opacity ?? 0.88) * 0.25;
+
+                    const arcMat = new MeshBasicMaterial({
+                        color: arcColorObj,
+                        transparent: true,
+                        opacity: baseArcOpacity,
+                    });
+                    arcCoreMaterial = arcMat;
+                    arcMaterialsRef.current.push(arcMat);
+
+                    const glowArcMat = new MeshBasicMaterial({
+                        color: arcColorObj,
+                        transparent: true,
+                        opacity: baseGlowOpacity,
+                    });
+                    arcGlowMaterial = glowArcMat;
+                    arcMaterialsRef.current.push(glowArcMat);
+
+                    const tubeRadius = (arcConfig?.width ?? 1.2) * globeRadius * 0.0035;
+                    const glowRadius = tubeRadius * 2.2;
+                    const maxAltitude = arcConfig?.altitude ?? 0.18;
+
+                    const totalPairs = (validMarkerVectors.length * (validMarkerVectors.length - 1)) / 2;
+
+                    for (let i = 0; i < validMarkerVectors.length; i++) {
+                        for (let j = i + 1; j < validMarkerVectors.length; j++) {
+                            const v1 = validMarkerVectors[i];
+                            const v2 = validMarkerVectors[j];
+                            const angle = v1.angleTo(v2);
+                            if (angle < 0.01) continue;
+
+                            const axis = new Vector3().crossVectors(v1, v2).normalize();
+                            if (axis.lengthSq() < 0.001) continue;
+
+                            const distance = v1.distanceTo(v2);
+                            // Altitude rises gracefully in 3D round dome
+                            const altitude = Math.min(globeRadius * maxAltitude, distance * 0.18);
+
+                            const points: Vector3[] = [];
+                            const segments = 36;
+                            for (let s = 0; s <= segments; s++) {
+                                const t = s / segments;
+                                const pt = v1.clone().applyAxisAngle(axis, angle * t);
+                                const currentRadius = globeRadius + Math.sin(t * Math.PI) * altitude;
+                                pt.setLength(currentRadius);
+                                points.push(pt);
+                            }
+
+                            const curve = new CatmullRomCurve3(points);
+
+                            // Core neon tube line - start with 0 draw range so "phle se hi connect na rahe"
+                            const tubeGeo = new TubeGeometry(curve, 32, tubeRadius, 8, false);
+                            tubeGeo.setDrawRange(0, 0);
+                            const tubeMesh = new Mesh(tubeGeo, arcMat);
+                            globeGroup.add(tubeMesh);
+                            arcMeshes.push(tubeMesh);
+
+                            // Soft outer glow tube line
+                            const glowGeo = new TubeGeometry(curve, 24, glowRadius, 8, false);
+                            glowGeo.setDrawRange(0, 0);
+                            const glowMesh = new Mesh(glowGeo, glowArcMat);
+                            globeGroup.add(glowMesh);
+                            arcMeshes.push(glowMesh);
+
+                            const pairIdx = arcAnimItems.length;
+                            const staggerStart = (pairIdx / Math.max(1, totalPairs)) * 0.35;
+                            const staggerDuration = 0.65;
+
+                            arcAnimItems.push({
+                                coreMesh: tubeMesh,
+                                glowMesh: glowMesh,
+                                totalIndices: tubeGeo.index?.count || 1536,
+                                glowIndices: glowGeo.index?.count || 1152,
+                                staggerStart,
+                                staggerDuration,
+                            });
+                        }
+                    }
+                }
             }
         };
 
@@ -893,6 +1045,53 @@ export function Globe({
         const animate = () => {
             let needsRender = false;
             const threshold = 0.01;
+
+            const now = performance.now();
+            const dt = Math.min((now - lastTime) / 1000, 0.1);
+            lastTime = now;
+
+            const DRAW_DURATION = 2.0; // 2.0s to draw lines
+            const WAIT_DURATION = 2.0; // 2.0s hold / wait when all lines are connected
+            const FADE_DURATION = 0.4; // 0.4s clean fade out before restarting
+            const TOTAL_CYCLE = DRAW_DURATION + WAIT_DURATION + FADE_DURATION;
+
+            if (arcAnimItems.length > 0) {
+                arcCycleTime = (arcCycleTime + dt) % TOTAL_CYCLE;
+
+                let globalFade = 1.0;
+                if (arcCycleTime >= DRAW_DURATION + WAIT_DURATION) {
+                    const fadeT = (arcCycleTime - (DRAW_DURATION + WAIT_DURATION)) / FADE_DURATION;
+                    globalFade = Math.max(0, 1 - fadeT);
+                }
+
+                if (arcCoreMaterial) {
+                    arcCoreMaterial.opacity = baseArcOpacity * globalFade;
+                }
+                if (arcGlowMaterial) {
+                    arcGlowMaterial.opacity = baseGlowOpacity * globalFade;
+                }
+
+                for (let k = 0; k < arcAnimItems.length; k++) {
+                    const item = arcAnimItems[k];
+                    let progress = 1;
+                    if (arcCycleTime < DRAW_DURATION) {
+                        const tNorm = arcCycleTime / DRAW_DURATION;
+                        const lineT = Math.max(0, Math.min(1, (tNorm - item.staggerStart) / item.staggerDuration));
+                        progress = 1 - Math.pow(1 - lineT, 3);
+                    } else if (arcCycleTime >= DRAW_DURATION + WAIT_DURATION) {
+                        progress = 1;
+                    }
+
+                    const count = Math.floor((progress * item.totalIndices) / 6) * 6;
+                    item.coreMesh.geometry.setDrawRange(0, count);
+
+                    const glowCount = Math.floor((progress * item.glowIndices) / 6) * 6;
+                    item.glowMesh.geometry.setDrawRange(0, glowCount);
+                }
+
+                needsRender = true;
+            }
+
             if (
                 !isDragging &&
                 rotationSpeed !== 0 &&
@@ -945,7 +1144,7 @@ export function Globe({
             const hasLerpDelta =
                 Math.abs(dx) > threshold || Math.abs(dy) > threshold;
             const needsContinue =
-                isDragging || rotationSpeed !== 0 || hasVelocity || hasLerpDelta;
+                isDragging || rotationSpeed !== 0 || hasVelocity || hasLerpDelta || arcAnimItems.length > 0;
             if (needsContinue) {
                 animationFrameId = requestAnimationFrame(animate);
             } else {
@@ -958,7 +1157,7 @@ export function Globe({
                 animationFrameId = requestAnimationFrame(animate);
             }
         };
-        if (rotationSpeed !== 0) {
+        if (rotationSpeed !== 0 || arcAnimItems.length > 0) {
             startAnimation();
         }
 
@@ -1040,6 +1239,7 @@ export function Globe({
             dotMaterialRef.current = null;
             outlineMaterialsRef.current = [];
             markerMaterialsRef.current = [];
+            arcMaterialsRef.current = [];
             rendererRef.current = null;
             sceneRef.current = null;
             cameraRef.current = null;

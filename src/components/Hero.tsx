@@ -219,6 +219,14 @@ export const Hero: React.FC<HeroProps> = ({ currency }) => {
                   color: '#FF4B32',
                   size: 55,
                 }}
+                arcConfig={{
+                  show: true,
+                  color: '#FF4B32',
+                  width: 1.3,
+                  altitude: 0.18,
+                  opacity: 0.88,
+                  connectAllMarkers: true,
+                }}
                 style={{ width: '100%', height: '100%' }}
               />
             </div>
