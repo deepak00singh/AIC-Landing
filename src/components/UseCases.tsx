@@ -173,7 +173,7 @@ export const UseCases: React.FC = () => {
       }`}
     >
       {/* Sticky viewport frame that locks into place while scrolling through cards */}
-      <div className="sticky top-0 h-screen w-full flex flex-col justify-between pt-20 sm:pt-24 pb-6 overflow-hidden">
+      <div className="sticky top-0 h-screen w-full flex flex-col justify-between pt-20 sm:pt-24 pb-8 sm:pb-12 overflow-hidden">
         
         {/* Section Header with Live Card Progress & Controls */}
         <div className="w-full max-w-7xl xl:max-w-[1380px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 shrink-0">
@@ -304,19 +304,7 @@ export const UseCases: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Interactive Guide Bar */}
-        <div className="w-full max-w-7xl xl:max-w-[1380px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 shrink-0">
-          <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-[#929DA7] pt-2 border-t border-[#929DA7]/10">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#FF4B32] animate-pulse" />
-              <span>Scroll down to glide smoothly through all 6 architecture use cases</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-slate-400">
-              <span>{activeCard === USE_CASES.length ? 'All architectures viewed • Continue scrolling for FAQ' : 'Scroll down for next card'}</span>
-              <span className="text-[#FF4B32]">↓</span>
-            </div>
-          </div>
-        </div>
+
 
       </div>
     </section>
