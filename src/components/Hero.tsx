@@ -63,24 +63,48 @@ export const Hero: React.FC<HeroProps> = ({ currency }) => {
       {/* Radiant Spotlight Directly Behind the 3D Globe Stage in Light Mode */}
       {theme === 'light' ? (
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] sm:w-[380px] sm:h-[380px] lg:w-[460px] lg:h-[460px] xl:w-[520px] xl:h-[520px] rounded-full bg-gradient-to-tr from-[#FF4B32]/12 via-[#CBD5E1]/30 to-transparent blur-[60px] sm:blur-[90px] pointer-events-none -z-10"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] sm:w-[420px] sm:h-[420px] lg:w-[520px] lg:h-[520px] rounded-full bg-gradient-to-tr from-[#FF4B32]/12 via-[#CBD5E1]/30 to-transparent blur-[60px] sm:blur-[90px] pointer-events-none -z-10"
           aria-hidden="true"
         />
       ) : (
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[420px] sm:h-[420px] lg:w-[520px] lg:h-[520px] xl:w-[600px] xl:h-[600px] rounded-full bg-[#929DA7]/[0.05] blur-[80px] sm:blur-[140px] pointer-events-none -z-10"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[480px] sm:h-[480px] lg:w-[600px] lg:h-[600px] rounded-full bg-[#929DA7]/[0.05] blur-[80px] sm:blur-[140px] pointer-events-none -z-10"
           aria-hidden="true"
         />
       )}
 
-      {/* Main Content Container - Balanced across Mobile, Laptops (1366/1280), and Large Desktops */}
-      <div className="relative w-full z-20 flex flex-col justify-center lg:justify-between pt-22 sm:pt-24 lg:pt-20 xl:pt-24 2xl:pt-28 pb-8 sm:pb-10 lg:pb-3 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto h-full min-h-[calc(100dvh-64px)] lg:min-h-0">
+      {/* HAND 1: Emerges from BOTTOM-LEFT corner of screen towards globe (Desktop & Tablet) */}
+      <div
+        className="hidden md:block absolute -left-8 lg:-left-6 xl:-left-[100px] -bottom-34 lg:-bottom-40 xl:-bottom-[175px] md:w-[720px] lg:w-[820px] xl:w-[920px] pointer-events-none select-none z-20 animate-hand-bottom-left"
+        style={{
+          maskImage: 'linear-gradient(42deg, transparent 0%, rgba(0,0,0,0.2) 3%, rgba(0,0,0,0.8) 8%, #000 15%, #000 100%)',
+          WebkitMaskImage: 'linear-gradient(42deg, transparent 0%, rgba(0,0,0,0.2) 3%, rgba(0,0,0,0.8) 8%, #000 15%, #000 100%)',
+        }}
+      >
+        <img
+          alt="Left Reaching Hand"
+          className={`w-full h-auto object-contain pointer-events-none select-none ${
+            theme === 'light'
+              ? 'drop-shadow-[0_16px_40px_rgba(15,23,42,0.18)]'
+              : 'drop-shadow-[0_10px_40px_rgba(146,157,167,0.35)]'
+          }`}
+          style={{
+            transform: 'rotate(5deg) scale(0.88)',
+            transformOrigin: 'bottom left',
+            filter: theme === 'light' ? 'grayscale(1) brightness(1.02) contrast(1.08)' : 'grayscale(0.8) brightness(1.05) contrast(1.1)',
+          }}
+          src="/hand-left.png"
+        />
+      </div>
+
+      {/* Main Content Container - Centered and tight on Mobile, spacious on Desktop */}
+      <div className="relative w-full z-20 flex flex-col justify-center lg:justify-between pt-24 sm:pt-28 lg:pt-28 xl:pt-32 pb-10 sm:pb-12 lg:pb-4 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto h-full min-h-[calc(100dvh-64px)] lg:min-h-0">
 
         {/* Top Centered Header & Copy */}
-        <div className="relative z-30 text-center max-w-3xl mx-auto space-y-2.5 sm:space-y-3 pt-1 lg:pt-1">
+        <div className="relative z-30 text-center max-w-3xl mx-auto space-y-3 sm:space-y-3.5 pt-2 sm:pt-3 lg:pt-3">
 
           {/* Headline */}
-          <h1 className="text-2xl sm:text-3xl md:text-[36px] lg:text-[38px] xl:text-[46px] 2xl:text-[52px] font-black tracking-[-0.03em] leading-[1.14] sm:leading-[1.1] max-w-4xl mx-auto px-2">
+          <h1 className="text-2xl sm:text-3xl md:text-[42px] lg:text-[48px] xl:text-[52px] font-black tracking-[-0.03em] leading-[1.15] sm:leading-[1.08] max-w-4xl mx-auto px-2">
             <span
               className={`block transition-colors duration-300 ${
                 theme === 'light'
@@ -97,7 +121,7 @@ export const Hero: React.FC<HeroProps> = ({ currency }) => {
 
           {/* Subtitle */}
           <p
-            className={`text-xs sm:text-sm md:text-[14px] xl:text-[14.5px] leading-relaxed max-w-xl mx-auto pt-0.5 transition-colors duration-300 font-normal px-2 ${
+            className={`text-xs sm:text-sm md:text-[14.5px] leading-relaxed max-w-xl mx-auto pt-0.5 sm:pt-1 transition-colors duration-300 font-normal px-2 ${
               theme === 'light' ? 'text-[#475569]' : 'text-[#94A3B8]'
             }`}
           >
@@ -115,7 +139,7 @@ export const Hero: React.FC<HeroProps> = ({ currency }) => {
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 pt-1.5 sm:pt-2 w-full max-w-xs sm:max-w-none mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 pt-2 sm:pt-3 w-full max-w-xs sm:max-w-none mx-auto">
             <a
               href="#platform-services"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-2.5 rounded-full font-bold text-sm text-white bg-gradient-to-r from-[#FF4B32] via-[#FF553D] to-[#E63E26] hover:from-[#E63E26] hover:to-[#D1341E] shadow-[0_4px_20px_rgba(255,75,50,0.38)] hover:shadow-[0_8px_28px_rgba(255,75,50,0.5)] border border-[#FF6B55]/30 transition-all hover:scale-[1.02] active:scale-[0.98] group cursor-pointer"
@@ -136,39 +160,15 @@ export const Hero: React.FC<HeroProps> = ({ currency }) => {
           </div>
         </div>
 
-        {/* Centerpiece Stage: Interactive 3D Globe with Centered Relative Hands */}
-        <div className="relative w-full mt-4 sm:mt-6 lg:mt-0 lg:flex-1 lg:my-auto flex items-center justify-center overflow-visible">
+        {/* Centerpiece Stage: Interactive 3D Globe */}
+        <div className="relative w-full mt-6 sm:mt-8 lg:mt-0 lg:flex-1 lg:my-auto min-h-[260px] sm:min-h-[340px] md:min-h-[400px] lg:min-h-[460px] flex items-center justify-center overflow-visible">
 
-          {/* Central Anchor Stage: Both Hands & Globe are locked inside this invariant box */}
-          <div className="relative w-[250px] h-[250px] sm:w-[300px] sm:h-[300px] md:w-[340px] md:h-[340px] lg:w-[360px] lg:h-[360px] xl:w-[420px] xl:h-[420px] 2xl:w-[470px] 2xl:h-[470px] flex items-center justify-center shrink-0">
+          {/* Central Anchor Stage for Globe + Hands together */}
+          <div className="relative w-[260px] h-[260px] sm:w-[330px] sm:h-[330px] md:w-[410px] md:h-[410px] lg:w-[460px] lg:h-[460px] xl:w-[500px] xl:h-[500px] flex items-center justify-center">
 
-            {/* HAND 1: Locked to Bottom-Left of Globe Stage */}
+            {/* HAND 2: Reaches in from UPPER-RIGHT side towards upper-right region of globe (Desktop & Tablet) */}
             <div
-              className="hidden md:block absolute -left-[88%] lg:-left-[84%] xl:-left-[88%] -bottom-[22%] lg:-bottom-[20%] xl:-bottom-[22%] w-[136%] pointer-events-none select-none z-20 animate-hand-bottom-left"
-              style={{
-                maskImage: 'linear-gradient(42deg, transparent 0%, rgba(0,0,0,0.05) 5%, rgba(0,0,0,0.6) 12%, #000 20%, #000 100%)',
-                WebkitMaskImage: 'linear-gradient(42deg, transparent 0%, rgba(0,0,0,0.05) 5%, rgba(0,0,0,0.6) 12%, #000 20%, #000 100%)',
-              }}
-            >
-              <img
-                alt="Left Reaching Hand"
-                className={`w-full h-auto object-contain pointer-events-none select-none ${
-                  theme === 'light'
-                    ? 'drop-shadow-[0_16px_40px_rgba(15,23,42,0.18)]'
-                    : 'drop-shadow-[0_10px_40px_rgba(146,157,167,0.35)]'
-                }`}
-                style={{
-                  transform: 'rotate(6deg) scale(0.92)',
-                  transformOrigin: 'bottom left',
-                  filter: theme === 'light' ? 'grayscale(1) brightness(1.02) contrast(1.08)' : 'grayscale(0.8) brightness(1.05) contrast(1.1)',
-                }}
-                src="/hand-left.png"
-              />
-            </div>
-
-            {/* HAND 2: Locked to Upper-Right of Globe Stage */}
-            <div
-              className="hidden md:block absolute -right-[78%] lg:-right-[74%] xl:-right-[78%] -top-[24%] lg:-top-[22%] xl:-top-[24%] w-[124%] pointer-events-none select-none z-10 animate-hand-top-right"
+              className="hidden md:block absolute left-[80%] lg:left-[92%] xl:left-[90%] -top-40 lg:-top-48 xl:-top-[225px] md:w-[620px] lg:w-[700px] xl:w-[760px] pointer-events-none select-none z-10 animate-hand-top-right"
               style={{
                 maskImage: 'linear-gradient(to right, #000 0%, #000 65%, rgba(0,0,0,0.8) 78%, rgba(0,0,0,0.3) 90%, transparent 99%)',
                 WebkitMaskImage: 'linear-gradient(to right, #000 0%, #000 65%, rgba(0,0,0,0.8) 78%, rgba(0,0,0,0.3) 90%, transparent 99%)',
